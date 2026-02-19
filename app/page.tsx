@@ -1,97 +1,126 @@
 "use client";
 
 import React from 'react';
-import { Shield, Zap, Star, CreditCard, CheckCircle, Search, MessageCircle, Instagram, Info } from 'lucide-react';
+import { Shield, Star, CreditCard, CheckCircle, MapPin, HardDrive, Bell, Coffee, Sparkles, ClipboardCheck } from 'lucide-react';
 
 export default function HotelPage() {
   const data = {
     name: "北京万达文华酒店",
+    englishName: "Wanda Vista Beijing",
     stars: 5,
     prices: [
-      { platform: "携程", price: "980" },
-      { platform: "美团", price: "956" },
-      { platform: "Booking", price: "1020" },
-      { platform: "Agoda", price: "998" },
-      { platform: "Expedia", price: "1015" }
+      { platform: "酒店官方", price: "1050" },
+      { platform: "优选渠道 A", price: "980" },
+      { platform: "优选渠道 B", price: "956" },
+      { platform: "国际代理 I", price: "1020" },
+      { platform: "国际代理 II", price: "998" },
+      { platform: "国际代理 III", price: "1015" }
     ],
-    // 聚合评价库：来自你的三位一体分析法 [cite: 24-01-24]
-    reviews: [
-      { source: 'Google', icon: <Search size={14}/>, color: '#4285F4', text: "硬件素质扎实，客房宽敞，但插座分布和电子设备带有明显的年代感。[cite: 24-01-24]" },
-      { source: 'Ctrip', icon: <MessageCircle size={14}/>, color: '#0086F8', text: "服务专业且厚道，前台常主动升房，早餐的淮扬菜系极受好评。[cite: 24-01-24]" },
-      { source: 'Meituan', icon: <Zap size={14}/>, color: '#FFD000', text: "CBD核心区难得的千元以下（促销时）五星旗舰，适合商务性价比。[cite: 24-01-24]" },
-      { source: '小红书', icon: <Instagram size={14}/>, color: '#FF2442', text: "中式奢华氛围出片率极高，高层270度落日视角是绝佳机位。[cite: 24-01-24]" }
-    ],
-    summary: "融合Google的硬核反馈与国内平台的细节，这是CBD区域性价比与服务温度的最佳平衡点。[cite: 24-01-24]"
+    // 彻底重组后的六大维度内容 [cite: 24-01-24]
+    audit: [
+      { 
+        label: '位置 / LOCATION', 
+        icon: <MapPin size={18}/>, 
+        color: '#ff4d4f', 
+        content: "物业坐落于北京 CBD 核心区大望路板块，地理位置极具战略性。不仅紧邻 SKP 等顶级商业地标，其高层建筑更提供了长安街一线无遮挡的天际线视野。步行可达核心轨道交通，尽管高峰期周边路段存在不可避免的拥堵，但对于追求城心便捷度与城景视野的住客而言，这依然是该区域的黄金坐标。" 
+      },
+      { 
+        label: '硬件 / HARDWARE', 
+        icon: <HardDrive size={18}/>, 
+        color: '#d4af37', 
+        content: "整体呈现经典的老牌奢华质感，建筑结构表现出卓越的稳定性，超高层房型在大风天气下的静音与避震效果极佳。客房空间尺度在同级产品中位居前列，实木与石材的大量应用保障了感官深度。需要注意的是数字化交互设施略显代差，如床头电力配置未更新至主流标准，电视系统也带有明显的时代痕迹。" 
+      },
+      { 
+        label: '服务 / SERVICE', 
+        icon: <Bell size={18}/>, 
+        color: '#d4af37', 
+        content: "展现了极高的本土化服务成熟度与运营韧性。前台团队对高级别会员的权益保障意识清晰，升房响应及待遇落实非常厚道。礼宾系统在处理外卖无感交付、高频快递中转及差旅咨询方面流程极其成熟。虽然整体服务风格偏向稳重老成，但响应速度与执行效率始终维持在五星级旗舰的水准。" 
+      },
+      { 
+        label: '早餐 / BREAKFAST', 
+        icon: <Coffee size={18}/>, 
+        color: '#ff4d4f', 
+        content: "餐饮基因强大，早餐品质被公认为北京奢华酒店的第一梯队。核心亮点在于高水准的中式档口出品，口味地道且种类丰富，特别是现做的淮扬特色点心极具水准。西式面点与咖啡系统品质稳定。即便在高流量时段，餐厅的补菜逻辑与秩序维护也表现得游刃有余。" 
+      },
+      { 
+        label: '亮点 / HIGHLIGHTS', 
+        icon: <Sparkles size={18}/>, 
+        color: '#d4af37', 
+        content: "该物业在美学价值与隐藏功能上具备显著优势。大理石旋转楼梯与 35 层以上的落日景观餐厅构成了极佳的社交视觉名片。此外，其室内恒温泳池的维护标准远超同价位竞品，水质与静谧度极佳。中式浮雕背景墙与复古奢华的装修风格在低饱和度光线下极具高级感，是非常成熟的视觉打卡地。" 
+      },
+      { 
+        label: '总结建议 / VERDICT', 
+        icon: <ClipboardCheck size={18}/>, 
+        color: '#ff4d4f', 
+        content: "综合评估其区位价值、硬件尺度及服务颗粒度，北京万达文华是 1000 元价位段内表现最稳健的奢华选品。它不仅平衡了商务差旅的效率需求，也满足了对经典奢华氛围的追求。对于能够接纳老牌设施细节的住客，该物业提供的综合回馈远超其市场定价，是 CBD 区域的性价比平衡之王。" 
+      }
+    ]
   };
 
-  const cardStyle = { backgroundColor: '#1a1a1a', border: '1px solid #333', borderRadius: '12px', padding: '20px', marginBottom: '15px' };
+  const bgGradient = 'linear-gradient(135deg, #1c1c1c 0%, #2d2d2d 100%)'; 
+  const cardBg = 'rgba(40, 40, 40, 0.6)';
 
   return (
-    <div style={{ backgroundColor: '#0a0a0a', color: '#d4af37', minHeight: '100vh', padding: '40px 20px', fontFamily: 'sans-serif' }}>
-      <div style={{ maxWidth: '600px', margin: '0 auto' }}>
+    <div style={{ background: bgGradient, color: '#f5f5f5', minHeight: '100vh', padding: '40px 5% 80px 5%', fontFamily: 'system-ui, sans-serif' }}>
+      
+      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
         
-        {/* 1. 标题区：强化文字质感 */}
-        <div style={{ borderBottom: '1px solid #333', paddingBottom: '20px', marginBottom: '30px' }}>
-          <h1 style={{ fontSize: '32px', margin: '0 0 8px 0', color: '#fff', fontWeight: 'bold', letterSpacing: '1px' }}>{data.name}</h1>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <div style={{ display: 'flex', gap: '2px' }}>
-              {[...Array(data.stars)].map((_, i) => <Star key={i} size={16} fill="#d4af37" color="#d4af37" />)}
+        {/* 标题区 */}
+        <div style={{ borderBottom: '2px solid #ff4d4f', paddingBottom: '30px', marginBottom: '40px' }}>
+          <h1 style={{ fontSize: 'clamp(24px, 4vw, 36px)', margin: '0 0 10px 0', color: '#d4af37', fontWeight: 'bold' }}>{data.name}</h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+            <div style={{ display: 'flex', gap: '3px' }}>
+              {[...Array(data.stars)].map((_, i) => <Star key={i} size={18} fill="#d4af37" color="#d4af37" />)}
             </div>
-            <span style={{ color: '#666', fontSize: '14px', marginLeft: '10px' }}>Luxury Standard</span>
+            <span style={{ color: '#888', fontSize: '14px', letterSpacing: '1px' }}>{data.englishName} | 深度审计报告</span>
           </div>
         </div>
 
-        {/* 2. 5 平台比价：全包含税版 [cite: 24-01-24] */}
-        <div style={{ marginBottom: '35px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#fff', fontSize: '13px', fontWeight: 'bold' }}>
-              <CreditCard size={16} color="#d4af37" /> <span>实时比价 / PRICE CHECK</span>
+        {/* 1. 价格区 */}
+        <div style={{ marginBottom: '50px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#ff4d4f', fontSize: '14px', fontWeight: 'bold' }}>
+              <CreditCard size={18} /> <span>全渠道价格实时指数 / PRICE INDEX</span>
             </div>
-            <div style={{ color: '#00ff00', fontSize: '11px', fontWeight: '500' }}>● 含税全包价 [cite: 24-01-24]</div>
+            <div style={{ color: '#d4af37', fontSize: '12px' }}>● 价格已含全部税费</div>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '10px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '15px' }}>
             {data.prices.map((p, i) => (
-              <div key={i} style={{ backgroundColor: '#111', padding: '15px 5px', borderRadius: '10px', border: '1px solid #d4af3722', textAlign: 'center' }}>
-                <div style={{ color: '#888', fontSize: '10px', marginBottom: '6px' }}>{p.platform}</div>
-                <div style={{ fontSize: '15px', color: '#fff', fontWeight: 'bold' }}>¥{p.price}</div>
+              <div key={i} style={{ 
+                background: cardBg, padding: '20px 10px', borderRadius: '12px', 
+                border: p.platform === '酒店官方' ? '1px solid #d4af37' : '1px solid #3d3d3d', 
+                textAlign: 'center', borderLeft: p.platform === '酒店官方' ? '4px solid #d4af37' : '1px solid #3d3d3d'
+              }}>
+                <div style={{ color: p.platform === '酒店官方' ? '#d4af37' : '#888', fontSize: '11px', marginBottom: '8px', fontWeight: 'bold' }}>{p.platform}</div>
+                <div style={{ fontSize: '22px', color: '#fff', fontWeight: 'bold' }}>¥{p.price}</div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* 3. 全渠道情报汇总：你的核心竞争力 [cite: 24-01-24] */}
-        <div style={cardStyle}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '25px', color: '#fff', fontWeight: 'bold', fontSize: '15px' }}>
-            <Shield size={20} color="#3b82f6" /> <span>全球洞察汇总 / GLOBAL INSIGHTS</span>
-          </div>
-          {data.reviews.map((rev, i) => (
-            <div key={i} style={{ display: 'flex', gap: '15px', marginBottom: '22px', fontSize: '14px', lineHeight: '1.7' }}>
-              <div style={{ 
-                display: 'flex', alignItems: 'center', gap: '6px', 
-                backgroundColor: rev.color + '15', color: rev.color, 
-                padding: '4px 10px', borderRadius: '6px', height: 'fit-content', 
-                fontSize: '11px', fontWeight: 'bold', border: `1px solid ${rev.color}33`,
-                minWidth: '80px', justifyContent: 'center' 
-              }}>
-                {rev.source}
+        {/* 2. 六大维度垂直报告 [cite: 24-01-24] */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          {data.audit.map((item, i) => (
+            <div key={i} style={{ 
+              background: cardBg, 
+              borderRadius: '16px', 
+              padding: '30px', 
+              border: '1px solid #3d3d3d',
+              borderLeft: `6px solid ${item.color}`
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '15px' }}>
+                <span style={{ color: item.color }}>{item.icon}</span>
+                <span style={{ color: item.color, fontWeight: 'bold', fontSize: '16px', letterSpacing: '1px' }}>{item.label}</span>
               </div>
-              <span style={{ color: '#ccc' }}>{rev.text}</span>
+              <div style={{ color: '#ddd', fontSize: '15px', lineHeight: '1.9', textAlign: 'justify' }}>
+                {item.content}
+              </div>
             </div>
           ))}
         </div>
 
-        {/* 4. 最终总结建议 [cite: 24-01-24] */}
-        <div style={{ ...cardStyle, border: '1px solid #d4af3744', background: 'linear-gradient(145deg, #1a1a1a, #0d0d0d)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px', color: '#fff', fontWeight: 'bold', fontSize: '15px' }}>
-            <Info size={20} color="#d4af37" /> <span>决策建议 / FINAL VERDICT</span>
-          </div>
-          <p style={{ color: '#fff', fontSize: '14px', fontStyle: 'italic', margin: 0, lineHeight: '1.8' }}>
-            "{data.summary}"
-          </p>
-        </div>
-
-        <div style={{ textAlign: 'center', marginTop: '50px', fontSize: '11px', color: '#333', letterSpacing: '2px' }}>
-          DATA INTEGRATION: GOOGLE / CTRIP / MEITUAN / RED
+        <div style={{ textAlign: 'center', marginTop: '60px', fontSize: '11px', color: '#555', letterSpacing: '3px' }}>
+          PROPRIETARY AUDIT FRAMEWORK | 2026 EDITION
         </div>
       </div>
     </div>
