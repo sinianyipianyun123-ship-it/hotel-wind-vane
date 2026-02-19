@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { Shield, Star, CreditCard, CheckCircle, MapPin, HardDrive, Bell, Coffee, Sparkles, ClipboardCheck } from 'lucide-react';
+import { Star, CreditCard, CheckCircle, MapPin, HardDrive, Bell, Coffee, Sparkles, ClipboardCheck } from 'lucide-react';
 
 export default function HotelPage() {
   const data = {
@@ -16,12 +16,11 @@ export default function HotelPage() {
       { platform: "国际代理 II", price: "998" },
       { platform: "国际代理 III", price: "1015" }
     ],
-    // 彻底重组后的六大维度内容 [cite: 24-01-24]
     audit: [
       { 
         label: '位置 / LOCATION', 
         icon: <MapPin size={18}/>, 
-        color: '#ff4d4f', 
+        color: '#e63946', 
         content: "物业坐落于北京 CBD 核心区大望路板块，地理位置极具战略性。不仅紧邻 SKP 等顶级商业地标，其高层建筑更提供了长安街一线无遮挡的天际线视野。步行可达核心轨道交通，尽管高峰期周边路段存在不可避免的拥堵，但对于追求城心便捷度与城景视野的住客而言，这依然是该区域的黄金坐标。" 
       },
       { 
@@ -39,7 +38,7 @@ export default function HotelPage() {
       { 
         label: '早餐 / BREAKFAST', 
         icon: <Coffee size={18}/>, 
-        color: '#ff4d4f', 
+        color: '#e63946', 
         content: "餐饮基因强大，早餐品质被公认为北京奢华酒店的第一梯队。核心亮点在于高水准的中式档口出品，口味地道且种类丰富，特别是现做的淮扬特色点心极具水准。西式面点与咖啡系统品质稳定。即便在高流量时段，餐厅的补菜逻辑与秩序维护也表现得游刃有余。" 
       },
       { 
@@ -51,76 +50,78 @@ export default function HotelPage() {
       { 
         label: '总结建议 / VERDICT', 
         icon: <ClipboardCheck size={18}/>, 
-        color: '#ff4d4f', 
+        color: '#e63946', 
         content: "综合评估其区位价值、硬件尺度及服务颗粒度，北京万达文华是 1000 元价位段内表现最稳健的奢华选品。它不仅平衡了商务差旅的效率需求，也满足了对经典奢华氛围的追求。对于能够接纳老牌设施细节的住客，该物业提供的综合回馈远超其市场定价，是 CBD 区域的性价比平衡之王。" 
       }
     ]
   };
 
-  const bgGradient = 'linear-gradient(135deg, #1c1c1c 0%, #2d2d2d 100%)'; 
-  const cardBg = 'rgba(40, 40, 40, 0.6)';
+  // 调整为浅灰色背景渐变
+  const bgGradient = 'linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%)'; 
+  const cardBg = 'rgba(255, 255, 255, 0.8)'; // 白色半透明卡片，更清爽
 
   return (
-    <div style={{ background: bgGradient, color: '#f5f5f5', minHeight: '100vh', padding: '40px 5% 80px 5%', fontFamily: 'system-ui, sans-serif' }}>
+    <div style={{ background: bgGradient, color: '#1f2937', minHeight: '100vh', padding: '40px 5% 80px 5%', fontFamily: 'system-ui, sans-serif' }}>
       
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
         
-        {/* 标题区 */}
-        <div style={{ borderBottom: '2px solid #ff4d4f', paddingBottom: '30px', marginBottom: '40px' }}>
-          <h1 style={{ fontSize: 'clamp(24px, 4vw, 36px)', margin: '0 0 10px 0', color: '#d4af37', fontWeight: 'bold' }}>{data.name}</h1>
+        {/* 标题区：删除了审计报告字样 */}
+        <div style={{ borderBottom: '3px solid #e63946', paddingBottom: '30px', marginBottom: '40px' }}>
+          <h1 style={{ fontSize: 'clamp(26px, 4vw, 38px)', margin: '0 0 10px 0', color: '#111827', fontWeight: '800' }}>{data.name}</h1>
           <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
             <div style={{ display: 'flex', gap: '3px' }}>
               {[...Array(data.stars)].map((_, i) => <Star key={i} size={18} fill="#d4af37" color="#d4af37" />)}
             </div>
-            <span style={{ color: '#888', fontSize: '14px', letterSpacing: '1px' }}>{data.englishName} | 深度审计报告</span>
+            <span style={{ color: '#4b5563', fontSize: '15px', fontWeight: '500', letterSpacing: '1px' }}>{data.englishName}</span>
           </div>
         </div>
 
-        {/* 1. 价格区 */}
+        {/* 1. 价格区：金色字与清爽卡片 */}
         <div style={{ marginBottom: '50px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#ff4d4f', fontSize: '14px', fontWeight: 'bold' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#e63946', fontSize: '15px', fontWeight: '700' }}>
               <CreditCard size={18} /> <span>全渠道价格实时指数 / PRICE INDEX</span>
             </div>
-            <div style={{ color: '#d4af37', fontSize: '12px' }}>● 价格已含全部税费</div>
+            <div style={{ color: '#6b7280', fontSize: '13px', fontWeight: '500' }}>● 价格已含全部税费</div>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '15px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '15px' }}>
             {data.prices.map((p, i) => (
               <div key={i} style={{ 
                 background: cardBg, padding: '20px 10px', borderRadius: '12px', 
-                border: p.platform === '酒店官方' ? '1px solid #d4af37' : '1px solid #3d3d3d', 
-                textAlign: 'center', borderLeft: p.platform === '酒店官方' ? '4px solid #d4af37' : '1px solid #3d3d3d'
+                border: p.platform === '酒店官方' ? '2px solid #d4af37' : '1px solid #cbd5e1', 
+                textAlign: 'center', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
               }}>
-                <div style={{ color: p.platform === '酒店官方' ? '#d4af37' : '#888', fontSize: '11px', marginBottom: '8px', fontWeight: 'bold' }}>{p.platform}</div>
-                <div style={{ fontSize: '22px', color: '#fff', fontWeight: 'bold' }}>¥{p.price}</div>
+                <div style={{ color: p.platform === '酒店官方' ? '#b48a21' : '#6b7280', fontSize: '12px', marginBottom: '8px', fontWeight: '700' }}>{p.platform}</div>
+                <div style={{ fontSize: '24px', color: p.platform === '酒店官方' ? '#d4af37' : '#111827', fontWeight: '800' }}>¥{p.price}</div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* 2. 六大维度垂直报告 [cite: 24-01-24] */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        {/* 2. 六大维度垂直报告 */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '25px' }}>
           {data.audit.map((item, i) => (
             <div key={i} style={{ 
               background: cardBg, 
               borderRadius: '16px', 
-              padding: '30px', 
-              border: '1px solid #3d3d3d',
-              borderLeft: `6px solid ${item.color}`
+              padding: '35px', 
+              border: '1px solid #cbd5e1',
+              borderLeft: `8px solid ${item.color}`,
+              boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.05)'
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '15px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '18px' }}>
                 <span style={{ color: item.color }}>{item.icon}</span>
-                <span style={{ color: item.color, fontWeight: 'bold', fontSize: '16px', letterSpacing: '1px' }}>{item.label}</span>
+                <span style={{ color: item.color === '#d4af37' ? '#b48a21' : item.color, fontWeight: '800', fontSize: '18px', letterSpacing: '1px' }}>{item.label}</span>
               </div>
-              <div style={{ color: '#ddd', fontSize: '15px', lineHeight: '1.9', textAlign: 'justify' }}>
+              <div style={{ color: '#374151', fontSize: '16px', lineHeight: '2', textAlign: 'justify', fontWeight: '450' }}>
                 {item.content}
               </div>
             </div>
           ))}
         </div>
 
-        <div style={{ textAlign: 'center', marginTop: '60px', fontSize: '11px', color: '#555', letterSpacing: '3px' }}>
-          PROPRIETARY AUDIT FRAMEWORK | 2026 EDITION
+        <div style={{ textAlign: 'center', marginTop: '60px', fontSize: '12px', color: '#9ca3af', letterSpacing: '4px', fontWeight: '600' }}>
+          PROPRIETARY EVALUATION FRAMEWORK | 2026
         </div>
       </div>
     </div>
