@@ -1,161 +1,116 @@
 "use client";
 
 import React, { useState } from 'react';
+import { Shield, Zap, Info, Star } from 'lucide-react';
 
-// --- 1. 类型定义 ---
-type AccentType = 'Geek' | 'Explorer';
-
-interface HotelData {
-  name: string;
-  stars: number;
-  rates: { platform: string; price: number }[];
-  dimensions: {
-    location: string[];
-    service: string[];
-    hardware: string[];
-    amenities: string[];
-    socialHighlights: string[];   
-    dehydratedWarnings: string[]; 
-  };
-  suggestion: string;
-}
-
-// --- 2. 核心 Mock 数据 (包含小红书脱水内容) ---
-const MOCK_DATA: HotelData = {
-  name: "北京万达文华酒店",
-  stars: 5,
-  rates: [
-    { platform: '携程', price: 1580 },
-    { platform: '美团', price: 1520 },
-    { platform: 'Google', price: 1610 }
-  ],
-  dimensions: {
-    location: ['CBD核心区', '紧邻长安街', '下楼万达广场'],
-    service: ['前台响应极快', '主动提供儿童洗漱包'],
-    hardware: ['万达文华之床 (9.0+)', '隔音优秀'],
-    amenities: ['早餐含地道北京小吃', '24h健身房'],
-    socialHighlights: ['21层走廊尽头拍国贸三期绝美', '行政酒廊落地窗出片率高'],
-    dehydratedWarnings: ['淋浴间角落有细微霉点', '空调外机在高层有轻微共振', '外卖只能送至楼下外卖柜']
-  },
-  suggestion: "五星级老牌酒店，若比周边柏悦便宜500元以上则性价比极高。入住务必备注‘高层非吸烟房’。"
-};
-
-// --- 3. 页面主组件 ---
 export default function HotelPage() {
-  const [accent, setAccent] = useState<AccentType>('Geek'); // 默认极客口音
+  // 遵循 [2026-01-24] 的要求：添加口音偏好选择逻辑
+  const [accent, setAccent] = useState('Explorer');
 
-  const isGeek = accent === 'Geek';
+  const data = {
+    name: "北京万达文华酒店",
+    stars: 5,
+    // 更新为四个全球主流平台，包括 Expedia
+    prices: [
+      { platform: "携程", price: "1580" },
+      { platform: "美团", price: "1520" },
+      { platform: "Booking", price: "1610" },
+      { platform: "Expedia", price: "1625" }
+    ],
+    minimal: {
+      location: "CBD核心区，双地铁交汇",
+      service: "前台响应极快，礼宾主动性强",
+      hardware: "老牌奢华风，维护痕迹明显"
+    },
+    highlights: {
+      Geek: [
+        "冗余度分析：中央空调系统虽旧，但制冷泵数充足，高层震动控制在合理分贝。",
+        "响应延迟：客房服务响应中值约 3.8 分钟，优于同地段均值。",
+        "硬件衰减：地毯磨损率约 15%，但不影响结构性舒适度。"
+      ],
+      Explorer: [
+        "清晨的第一缕阳光会穿透CBD的雾霭，洒在老牌大理石地面上，很有归属感。",
+        "如果你喜欢复古的浪漫，这里的厚重感会让你觉得时光倒流。",
+        "哪怕只是下楼取外卖，礼宾的点头示意也充满了老派绅士的温度。"
+      ]
+    }
+  };
 
   return (
-    <div className={`min-h-screen p-4 md:p-8 transition-colors duration-500 ${isGeek ? 'bg-slate-950' : 'bg-blue-50'}`}>
-      <div className="max-w-4xl mx-auto">
-        
-        {/* 口音切换开关 (Accent Preference Selection) */}
-        <div className="flex justify-end mb-8">
-          <div className="bg-slate-800 p-1 rounded-lg flex gap-1">
-            {(['Geek', 'Explorer'] as AccentType[]).map((type) => (
-              <button
-                key={type}
-                onClick={() => setAccent(type)}
-                className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
-                  accent === type ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-400 hover:text-slate-200'
-                }`}
-              >
-                {type === 'Geek' ? '🤓 Geek 模式' : '🧭 Explorer 模式'}
-              </button>
+    <div className="min-h-screen bg-[#0a0a0a] text-[#d4af37] p-4 font-sans">
+      <style jsx global>{`
+        body { background-color: #0a0a0a; margin: 0; }
+        .card { background: #1a1a1a; border: 1px solid #333; border-radius: 12px; padding: 20px; margin-bottom: 16px; }
+        .btn-active { background: #d4af37; color: #000; font-weight: bold; }
+        .btn-inactive { border: 1px solid #d4af37; color: #d4af37; opacity: 0.5; }
+      `}</style>
+
+      {/* 偏好选择按钮 */}
+      <div className="flex justify-center gap-3 mb-8">
+        {['Geek', 'Explorer'].map((mode) => (
+          <button
+            key={mode}
+            onClick={() => setAccent(mode)}
+            className={`px-6 py-2 rounded-full text-xs transition-all ${accent === mode ? 'btn-active' : 'btn-inactive'}`}
+          >
+            {mode === 'Geek' ? '🤓 GEEK ACCENT' : '🧭 EXPLORER ACCENT'}
+          </button>
+        ))}
+      </div>
+
+      <div className="max-w-md mx-auto">
+        <h1 className="text-2xl font-bold mb-1 tracking-tight">{data.name}</h1>
+        <div className="flex gap-1 mb-6">
+          {[...Array(data.stars)].map((_, i) => <Star key={i} size={14} fill="#d4af37" />)}
+        </div>
+
+        {/* 上部分：极简版汇总 (固定显示) */}
+        <div className="card shadow-2xl border-t border-t-[#333]">
+          <div className="flex items-center gap-2 mb-4 text-white font-bold text-sm uppercase tracking-wider">
+            <Zap size={16} className="text-yellow-500" />
+            <span>极简快讯 / Minimalist</span>
+          </div>
+          <div className="space-y-3 text-sm">
+            <div className="flex justify-between border-b border-[#222] pb-1">
+              <span className="opacity-60">地理位置</span>
+              <span className="text-gray-200">{data.minimal.location}</span>
+            </div>
+            <div className="flex justify-between border-b border-[#222] pb-1">
+              <span className="opacity-60">服务评价</span>
+              <span className="text-gray-200">{data.minimal.service}</span>
+            </div>
+            <div className="flex justify-between border-b border-[#222] pb-1">
+              <span className="opacity-60">硬件设施</span>
+              <span className="text-gray-200">{data.minimal.hardware}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* 下部分：深度亮点 (随口音逻辑变化) */}
+        <div className="card border-t border-t-[#333]">
+          <div className="flex items-center gap-2 mb-4 text-white font-bold text-sm uppercase tracking-wider">
+            <Shield size={16} className="text-blue-500" />
+            <span>深度亮点 / Deep Insights</span>
+          </div>
+          <ul className="space-y-4">
+            {(accent === 'Geek' ? data.highlights.Geek : data.highlights.Explorer).map((item, i) => (
+              <li key={i} className="flex gap-3 text-sm leading-relaxed text-gray-400 italic font-light">
+                <Info size={14} className="mt-1 flex-shrink-0 text-[#d4af37] opacity-70" />
+                {item}
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
 
-        {/* 酒店核心风向标组件 */}
-        <div className={`p-6 rounded-3xl border transition-all duration-500 shadow-2xl ${
-          isGeek ? 'bg-slate-900 border-slate-700 text-slate-100' : 'bg-white border-blue-100 text-slate-900'
-        }`}>
-          {/* 头部：标题与星级 */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight">{MOCK_DATA.name}</h1>
-              <div className="flex items-center gap-1 mt-2">
-                {[...Array(MOCK_DATA.stars)].map((_, i) => (
-                  <span key={i} className="text-yellow-500 text-xl">★</span>
-                ))}
-                <span className="text-xs ml-3 uppercase tracking-widest opacity-60">Luxury Stay</span>
-              </div>
+        {/* 价格栏：4个平台（含 Expedia） */}
+        <div className="grid grid-cols-4 gap-2">
+          {data.prices.map((p, i) => (
+            <div key={i} className="bg-[#151515] py-3 px-1 rounded-lg border border-[#222] text-center shadow-inner">
+              <div className="text-[9px] text-gray-500 mb-1 uppercase font-bold">{p.platform}</div>
+              <div className="text-xs font-bold text-white">¥{p.price}</div>
             </div>
-            <div className="flex gap-2">
-              {MOCK_DATA.rates.map(r => (
-                <div key={r.platform} className={`px-3 py-2 rounded-xl border ${isGeek ? 'bg-slate-800 border-slate-700' : 'bg-slate-50 border-slate-200'}`}>
-                  <p className="text-[10px] opacity-60 uppercase">{r.platform}</p>
-                  <p className="text-sm font-bold text-blue-500">¥{r.price}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* 左侧：硬核评价 & 避雷 */}
-            <div className="space-y-6">
-              <section>
-                <h4 className={`text-xs font-bold mb-4 uppercase tracking-tighter ${isGeek ? 'text-slate-500' : 'text-blue-600'}`}>
-                  ● 深度素质分析 (Dehydrated Data)
-                </h4>
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <p className="font-bold opacity-60 mb-1">📍 地理</p>
-                    <p>{MOCK_DATA.dimensions.location[0]}</p>
-                  </div>
-                  <div>
-                    <p className="font-bold opacity-60 mb-1">🤝 服务</p>
-                    <p>{MOCK_DATA.dimensions.service[0]}</p>
-                  </div>
-                </div>
-              </section>
-
-              <section className={`p-5 rounded-2xl border-l-4 border-red-500 ${isGeek ? 'bg-red-500/10' : 'bg-red-50'}`}>
-                <h4 className="text-xs font-bold text-red-500 mb-3 uppercase flex items-center gap-2">
-                  ⚠️ 小红书脱水避雷针
-                </h4>
-                <ul className="space-y-2 text-sm">
-                  {MOCK_DATA.dimensions.dehydratedWarnings.map(w => (
-                    <li key={w} className={isGeek ? 'text-red-400' : 'text-red-700'}>• {w}</li>
-                  ))}
-                </ul>
-              </section>
-            </div>
-
-            {/* 右侧：社交高光 & 最终建议 */}
-            <div className="space-y-6">
-              <section className={`p-5 rounded-2xl ${isGeek ? 'bg-blue-500/5' : 'bg-gradient-to-br from-blue-50 to-pink-50'}`}>
-                <h4 className={`text-xs font-bold mb-4 uppercase ${isGeek ? 'text-blue-400' : 'text-pink-500'}`}>
-                  📸 社交出片机位 / 隐藏玩法
-                </h4>
-                <div className="flex flex-wrap gap-2">
-                  {MOCK_DATA.dimensions.socialHighlights.map(h => (
-                    <span key={h} className={`text-[11px] px-3 py-1 rounded-full border ${
-                      isGeek ? 'bg-slate-800 border-slate-700 text-blue-300' : 'bg-white border-pink-200 text-pink-600 shadow-sm'
-                    }`}>
-                      # {h}
-                    </span>
-                  ))}
-                </div>
-              </section>
-
-              <section className={`p-6 rounded-2xl border-2 transition-all ${
-                isGeek ? 'border-emerald-500/30 bg-emerald-500/5' : 'border-blue-400 bg-white shadow-xl'
-              }`}>
-                <p className="text-sm leading-relaxed">
-                  <span className="text-lg mr-2 font-bold">💡</span>
-                  <strong>{isGeek ? '系统结论：' : '达人建议：'}</strong>
-                  {MOCK_DATA.suggestion}
-                </p>
-              </section>
-            </div>
-          </div>
+          ))}
         </div>
-
-        <p className="text-center mt-8 text-[10px] opacity-40 uppercase tracking-[0.2em]">
-          Powered by Adventure Team Engine • 2026
-        </p>
       </div>
     </div>
   );
