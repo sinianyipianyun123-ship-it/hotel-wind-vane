@@ -80,7 +80,7 @@ export default function WandaVistaFinalV12Success() {
         <p style={{ fontSize: '14px', lineHeight: '1.8', color: colors.subText }}>位居 CBD 黄金腹地，酒店凭借高规格降噪技术与天然石材内饰，为精英人群在繁华都市中心切割出一片属于高净值的静谧高地。</p>
       </div>
 
-      {/* 战略建议 - 确认包含在此代码中 */}
+      {/* 战略建议 - 确认包含在此代码中 */}  
       <div style={{ backgroundColor: colors.card, padding: '25px', borderRadius: '15px', marginBottom: '20px', border: `2px solid ${colors.gold}` }}>
         <div style={{ color: colors.gold, fontWeight: 'bold', marginBottom: '10px' }}>📝 战略评估建议</div>
         <p style={{ fontSize: '14px', lineHeight: '1.8', margin: 0 }}>万达文华不仅是住宿坐标，更是商务精英不可多得的“全能堡垒”。凭借其扎实的硬件和睡眠安全标准，在综合对比中具备极高的确定性。</p>
