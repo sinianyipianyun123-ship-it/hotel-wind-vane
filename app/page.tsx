@@ -1,78 +1,76 @@
 "use client";
-import React, { useState } from 'react';
-// 确保这一行没有被注释掉
+
+import { useState } from "react";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
+// 确认这里的 Key 绝对没有空格
 const GOOGLE_AI_KEY = "AIzaSyBfbvl6kvWWRAvY__2698hbXDaJp1QXq10";
 
-export default function AdventureHotelApp() {
-  const [stage, setStage] = useState('search');
-  const [inputText, setInputText] = useState('');
-  const [aiAnalysis, setAiAnalysis] = useState('');
-  const [accent, setAccent] = useState('Expert');
+export default function HotelSearch() {
+  const [query, setQuery] = useState("");
+  const [result, setResult] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  // 定义口音
-  const accentMap: Record<string, string> = {
-    Expert: "专业、高端的行业专家口音",
-    Savage: "犀利、爱吐槽的毒舌点评口音",
-    Butler: "礼貌、贴心的管家口音"
-  };
-
-  const startAnalysis = async () => {
-    if (!inputText) return;
-    setStage('loading');
+  const handleSearch = async () => {
+    if (!query) return;
+    setLoading(true);
+    setResult("");
 
     try {
-      const genAI = new GoogleGenerativeAI(GOOGLE_AI_KEY);
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-      
-      const prompt = `你是 Adventure Team 调研员。用【${accentMap[accent]}】分析酒店: '${inputText}'。如果是北京万达文华，强调官网998元的优势。120字内。`;
+      // 1. 初始化，确保 Key 干净
+      const genAI = new GoogleGenerativeAI(GOOGLE_AI_KEY.trim());
+
+      // 2. 尝试使用更显式的模型定义方式
+      const model = genAI.getGenerativeModel({ 
+        model: "gemini-1.5-flash", // 如果依然404，下次尝试换成 "gemini-1.5-pro"
+      });
+
+      const prompt = `你是一个名为 'Adventure Team' 的毒舌高端酒店调研员。请调研酒店: ${query}。
+      要求：
+      1. 评价要犀利、真实，带点幽默感。
+      2. 包含：优缺点分析、值不值得住、避雷点。
+      3. 风格要像资深旅行者的私密分享。`;
 
       const result = await model.generateContent(prompt);
-      setAiAnalysis(result.response.text());
-      setStage('report');
-    } catch (err) {
-      console.error(err);
-      setAiAnalysis("获取调研报告失败，请检查 API Key 权限。");
-      setStage('report');
+      const response = await result.response;
+      setResult(response.text());
+    } catch (error: any) {
+      console.error("Gemini 详细错误信息:", error);
+      setResult(`获取失败: ${error.message || "请检查控制台错误日志"}`);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div style={{ backgroundColor: '#0a0a0a', minHeight: '100vh', color: '#fff', padding: '20px', fontFamily: 'sans-serif' }}>
-      {stage === 'search' && (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '80vh' }}>
-          <div style={{ color: '#d4af37', fontWeight: 'bold', letterSpacing: '4px', marginBottom: '20px' }}>ADVENTURE TEAM</div>
-          <div style={{ display: 'flex', gap: '10px', marginBottom: '30px' }}>
-            {Object.keys(accentMap).map(a => (
-              <button key={a} onClick={() => setAccent(a)} style={{
-                padding: '8px 15px', borderRadius: '4px', border: '1px solid #333',
-                backgroundColor: accent === a ? '#d4af37' : 'transparent',
-                color: accent === a ? '#000' : '#888', cursor: 'pointer'
-              }}>{a === 'Expert' ? '专业' : a === 'Savage' ? '毒舌' : '管家'}</button>
-            ))}
-          </div>
-          <div style={{ display: 'flex', width: '100%', maxWidth: '500px', backgroundColor: '#1a1a1a', borderRadius: '30px', padding: '10px 20px', border: '1px solid #333' }}>
-            <input style={{ flex: 1, backgroundColor: 'transparent', border: 'none', color: '#fff', outline: 'none' }} placeholder="输入酒店名称..." value={inputText} onChange={(e) => setInputText(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && startAnalysis()} />
-            <button onClick={startAnalysis} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>🔍</button>
+    <div className="p-8 max-w-2xl mx-auto font-sans">
+      <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">🏨 Adventure Team 酒店调研</h1>
+      
+      <div className="flex gap-2 mb-8">
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="输入酒店名称，例如：北京万达文华酒店"
+          className="flex-1 p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 text-black"
+        />
+        <button
+          onClick={handleSearch}
+          disabled={loading}
+          className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 transition-colors"
+        >
+          {loading ? "调研中..." : "🔍 搜索"}
+        </button>
+      </div>
+
+      {result && (
+        <div className="bg-white p-6 border-2 border-gray-200 rounded-xl shadow-lg">
+          <h2 className="text-xl font-bold mb-4 text-blue-600 border-b-2 border-blue-100 pb-2">调研报告</h2>
+          <div className="whitespace-pre-wrap leading-relaxed text-gray-700">
+            {result}
           </div>
         </div>
       )}
-
-      {stage === 'report' && (
-        <div style={{ maxWidth: '800px', margin: '40px auto' }}>
-          <header style={{ borderBottom: '1px solid #333', paddingBottom: '20px', marginBottom: '40px', display: 'flex', justifyContent: 'space-between' }}>
-            <span style={{ color: '#d4af37' }}>{accent} REPORT</span>
-            <span style={{ cursor: 'pointer', opacity: 0.5 }} onClick={() => setStage('search')}>← 返回</span>
-          </header>
-          <h1>{inputText}</h1>
-          <div style={{ backgroundColor: '#1a1a1a', padding: '30px', borderRadius: '8px', borderLeft: '4px solid #d4af37', marginTop: '30px' }}>
-            <p style={{ lineHeight: '1.8', color: '#ccc' }}>{aiAnalysis}</p>
-          </div>
-        </div>
-      )}
-
-      {stage === 'loading' && <div style={{ textAlign: 'center', marginTop: '100px', color: '#d4af37' }}>正在通过 Adventure Team 卫星调取数据...</div>}
     </div>
   );
-}  
+}
