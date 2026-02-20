@@ -31,7 +31,7 @@ const WandaVistaFinal = () => {
               price: r.price
             }))
           ];
-          setData({ rates: finalRates, loading: false });
+          setData({ rates: finalRates, loading: false }); 
         }
       } catch (e) { setData({ rates: [], loading: false }); }
     };
