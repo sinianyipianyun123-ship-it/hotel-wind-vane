@@ -24,7 +24,7 @@ export default function AdventureHotelApp() {
 
     try {
       const genAI = new GoogleGenerativeAI(GOOGLE_AI_KEY);
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+      const model = genAI.getGenerativeModel({ model: "gemini-1.0-pro" });
       
       const prompt = `你是 Adventure Team 调研员。用【${accentMap[accent]}】分析酒店: '${inputText}'。如果是北京万达文华，强调官网998元的优势。120字内。`;
 
