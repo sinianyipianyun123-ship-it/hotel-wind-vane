@@ -75,4 +75,4 @@ export default function AdventureHotelApp() {
       {stage === 'loading' && <div style={{ textAlign: 'center', marginTop: '100px', color: '#d4af37' }}>正在通过 Adventure Team 卫星调取数据...</div>}
     </div>
   );
-}
+}  
