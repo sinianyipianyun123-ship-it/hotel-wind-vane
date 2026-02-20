@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 // 确保这一行没有被注释掉
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const GOOGLE_AI_KEY = "AIzaSyBfbvl6kvWWRAvY__2698hbXDaJp1QXq10";
+const GOOGLE_AI_KEY = "AIzaSyBfbvl6kvWWRAvY_2698hbXDaJp1QXq10";
 
 export default function AdventureHotelApp() {
   const [stage, setStage] = useState('search');
