@@ -2,133 +2,142 @@
 import React, { useState } from 'react';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-// ==========================================
-// 🔑 已填入你刚才生成的 API KEY
-// ==========================================
-const API_KEY = "AIzaSyBfbvl6kvWWRAvY__2698hbXDaJp1QXq10";
+// 🔑 你的 Key 已经填入
+const GOOGLE_KEY = "AIzaSyBfbvl6kvWWRAvY__2698hbXDaJp1QXq10";
 
-export default function HotelExpertFinal() {
+export default function HotelAdventureFinal() {
   const [stage, setStage] = useState('search');
   const [inputText, setInputText] = useState('');
   const [aiAnalysis, setAiAnalysis] = useState('');
+  const [accent, setAccent] = useState('Professional'); // 默认口音
+
+  // 口音选项定义
+  const accents = [
+    { id: 'Professional', label: '专业内参', prompt: '语气干练、客观，像高端金融分析师。' },
+    { id: 'Humorous', label: '毒舌点评', prompt: '语气幽默、犀利，带点吐槽和毒舌。' },
+    { id: 'Enthusiastic', label: '热心探店', prompt: '语气亲切、热情，充满细节描述。' }
+  ];
 
   const handleSearch = async () => {
     if (!inputText) return;
     setStage('loading');
 
     try {
-      const genAI = new GoogleGenerativeAI(API_KEY);
+      const genAI = new GoogleGenerativeAI(GOOGLE_KEY);
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
       
-      // 设定 AI 的角色和逻辑
-      const prompt = `你是一个资深的酒店内参调研员。用户搜索了：'${inputText}'。
-      请根据你的知识库给出一段120字以内的深度点评。
-      如果是北京万达文华酒店，请特别强调其'中式奢华'风格，并指出目前官网价¥998是全网最有竞争力的入手机会。
-      输出要求：语气要干练、专业，像一份写给高端客户的内参，不要包含个人姓名。`;
+      const currentAccent = accents.find(a => a.id === accent)?.prompt;
+      
+      const prompt = `
+        你是一个资深的酒店调研员。
+        用户搜索了：'${inputText}'。
+        要求：
+        1. 点评要求：${currentAccent}
+        2. 字数：120字以内。
+        3. 特殊逻辑：如果是"北京万达文华酒店"，必须强调其中式奢华风格和官网¥998的性价比。
+        4. 身份：你是 Adventure Team 的首席分析师。
+      `;
 
       const result = await model.generateContent(prompt);
       setAiAnalysis(result.response.text());
       setStage('report');
     } catch (err) {
-      console.error(err);
-      setAiAnalysis("AI 连线失败。请确保你的 API Key 已在 Google Cloud 控制台启用了 'Generative Language API' 权限。");
+      setAiAnalysis("分析暂时不可用，可能是 API 连接受限。请检查 Vercel 部署环境或稍后再试。");
       setStage('report');
     }
   };
 
   return (
-    <div style={{ backgroundColor: '#f8f8f8', minHeight: '100vh', color: '#1a1a1a', fontFamily: 'system-ui, sans-serif' }}>
+    <div style={{ backgroundColor: '#121212', minHeight: '100vh', color: '#e0e0e0', fontFamily: 'Inter, system-ui, sans-serif' }}>
       
       {/* 1. 搜索页面 */}
       {stage === 'search' && (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', padding: '0 20px' }}>
-          <h2 style={{ fontSize: '18px', fontWeight: 'bold', color: '#d4af37', letterSpacing: '4px', marginBottom: '10px' }}>ADVENTURE TEAM</h2>
-          <h1 style={{ fontSize: '42px', fontWeight: '900', marginBottom: '40px', textAlign: 'center' }}>Where to, cui?</h1>
-          <div style={{ backgroundColor: '#fff', borderRadius: '50px', padding: '15px 35px', display: 'flex', width: '100%', maxWidth: '650px', boxShadow: '0 20px 40px rgba(0,0,0,0.06)', border: '1px solid #eee' }}>
+          <div style={{ color: '#d4af37', fontWeight: 'bold', letterSpacing: '5px', marginBottom: '20px' }}>ADVENTURE TEAM</div>
+          <h1 style={{ fontSize: '48px', fontWeight: '900', marginBottom: '40px', textAlign: 'center', color: '#fff' }}>Hotel Intel</h1>
+          
+          {/* 口音选择逻辑 */}
+          <div style={{ display: 'flex', gap: '10px', marginBottom: '30px' }}>
+            {accents.map(a => (
+              <button 
+                key={a.id}
+                onClick={() => setAccent(a.id)}
+                style={{
+                  padding: '8px 16px',
+                  borderRadius: '20px',
+                  border: accent === a.id ? '1px solid #d4af37' : '1px solid #333',
+                  backgroundColor: accent === a.id ? 'rgba(212,175,55,0.1)' : 'transparent',
+                  color: accent === a.id ? '#d4af37' : '#888',
+                  cursor: 'pointer',
+                  transition: '0.3s'
+                }}
+              >
+                {a.label}
+              </button>
+            ))}
+          </div>
+
+          <div style={{ backgroundColor: '#1e1e1e', borderRadius: '50px', padding: '15px 35px', display: 'flex', width: '100%', maxWidth: '600px', border: '1px solid #333' }}>
             <input 
               autoFocus 
               value={inputText} 
               onChange={(e) => setInputText(e.target.value)} 
               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-              placeholder="搜索酒店，获取 AI 实时调研报告..." 
-              style={{ flex: 1, border: 'none', outline: 'none', fontSize: '18px' }} 
+              placeholder="输入酒店名称..." 
+              style={{ flex: 1, border: 'none', outline: 'none', fontSize: '18px', backgroundColor: 'transparent', color: '#fff' }} 
             />
             <span onClick={handleSearch} style={{ cursor: 'pointer', fontSize: '28px', color: '#d4af37' }}>➔</span>
           </div>
         </div>
       )}
 
-      {/* 2. 报告详情页 */}
+      {/* 2. 调研报告页面 */}
       {stage === 'report' && (
-        <div style={{ maxWidth: '900px', margin: '0 auto', padding: '60px 20px' }}>
-          
-          <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '3px solid #1a1a1a', paddingBottom: '10px', marginBottom: '40px' }}>
-            <span style={{ fontWeight: 'bold', fontSize: '20px', letterSpacing: '1px' }}>实时价格对比 / PRICE WATCH</span>
-            <span style={{ color: '#d4af37', fontWeight: 'bold' }}>CONFIDENTIAL</span>
+        <div style={{ maxWidth: '850px', margin: '0 auto', padding: '60px 20px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #333', paddingBottom: '20px', marginBottom: '50px' }}>
+            <span style={{ fontWeight: 'bold', color: '#d4af37' }}>ADVENTURE TEAM / INTERNAL REPORT</span>
+            <span style={{ opacity: 0.5 }}>STATUS: FINALIZED</span>
           </div>
 
-          <div style={{ textAlign: 'center', marginBottom: '60px' }}>
-            <h1 style={{ fontSize: '42px', fontWeight: '900', margin: '0', letterSpacing: '-1px' }}>{inputText || "北京万达文华酒店"}</h1>
-            <div style={{ display: 'inline-block', backgroundColor: '#d4af37', color: '#fff', padding: '4px 15px', fontSize: '12px', fontWeight: 'bold', marginTop: '15px', borderRadius: '2px' }}>
-              GEMINI 1.5 FLASH 实时生成的报告
-            </div>
-          </div>
+          <h1 style={{ fontSize: '42px', fontWeight: '900', textAlign: 'center', marginBottom: '50px', color: '#fff' }}>{inputText}</h1>
 
-          {/* 价格矩阵 */}
+          {/* 价格对比模块 */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '15px', marginBottom: '60px' }}>
             {[
-              {n:'酒店官网', p:'998', b:true, t:'会员最优价'},
-              {n:'Ctrip', p:'1029', b:false, t:'平台同步'},
-              {n:'Agoda', p:'1023', b:false, t:'含税参考'},
-              {n:'Booking', p:'1050', b:false, t:'标准零售'}
+              {n:'官方/Direct', p:'998', b:true},
+              {n:'Ctrip', p:'1029'},
+              {n:'Agoda', p:'1023'},
+              {n:'Booking', p:'1050'}
             ].map((item, i) => (
               <div key={i} style={{ 
-                backgroundColor: item.b ? '#1a1a1a' : '#fff', 
-                color: item.b ? '#fff' : '#1a1a1a', 
-                padding: '30px 15px', 
+                backgroundColor: item.b ? '#d4af37' : '#1e1e1e', 
+                color: item.b ? '#000' : '#fff', 
+                padding: '25px 10px', 
                 textAlign: 'center', 
-                border: item.b ? 'none' : '1px solid #ddd',
-                boxShadow: item.b ? '0 10px 30px rgba(0,0,0,0.15)' : 'none'
+                borderRadius: '4px'
               }}>
-                <div style={{ fontSize: '11px', opacity: 0.6, marginBottom: '8px' }}>{item.t}</div>
-                <div style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '15px' }}>{item.n}</div>
-                <div style={{ fontSize: '28px', fontWeight: '200' }}>¥{item.p}</div>
+                <div style={{ fontSize: '11px', opacity: 0.7, marginBottom: '10px' }}>{item.n}</div>
+                <div style={{ fontSize: '24px', fontWeight: 'bold' }}>¥{item.p}</div>
               </div>
             ))}
           </div>
 
-          {/* AI 深度分析区 */}
-          <div style={{ backgroundColor: '#fff', padding: '50px', border: '1px solid #eee', position: 'relative' }}>
-             <div style={{ position: 'absolute', top: '-15px', left: '40px', backgroundColor: '#d4af37', color: '#fff', padding: '5px 20px', fontWeight: 'bold', fontSize: '14px' }}>
-               AI 调研摘要
-             </div>
-            <div style={{ fontSize: '18px', lineHeight: '1.8', color: '#333', fontStyle: 'italic' }}>
-              “{aiAnalysis}”
-            </div>
-            <div style={{ marginTop: '30px', paddingTop: '30px', borderTop: '1px solid #eee', display: 'flex', gap: '20px' }}>
-               <div style={{ flex: 1 }}>
-                  <h4 style={{ fontSize: '13px', color: '#999', marginBottom: '10px' }}>调研来源</h4>
-                  <p style={{ fontSize: '14px', fontWeight: 'bold' }}>Google DeepMind 全球知识库</p>
-               </div>
-               <div style={{ flex: 1 }}>
-                  <h4 style={{ fontSize: '13px', color: '#999', marginBottom: '10px' }}>更新时间</h4>
-                  <p style={{ fontSize: '14px', fontWeight: 'bold' }}>{new Date().toLocaleDateString()} 实时生成</p>
-               </div>
+          {/* AI 分析摘要 */}
+          <div style={{ backgroundColor: '#1e1e1e', padding: '40px', borderRadius: '8px', borderLeft: '4px solid #d4af37' }}>
+            <h3 style={{ fontSize: '14px', color: '#d4af37', marginBottom: '20px', letterSpacing: '2px' }}>AI ANALYSIS ({accent})</h3>
+            <div style={{ fontSize: '17px', lineHeight: '1.8', color: '#ccc' }}>
+              {aiAnalysis}
             </div>
           </div>
 
-          <p onClick={() => setStage('search')} style={{ textAlign: 'center', marginTop: '50px', cursor: 'pointer', color: '#999', textDecoration: 'underline' }}>返回搜索其它酒店</p>
+          <p onClick={() => setStage('search')} style={{ textAlign: 'center', marginTop: '50px', cursor: 'pointer', color: '#888', textDecoration: 'underline' }}>← 返回重新搜索</p>
         </div>
       )}
 
       {/* 3. 加载状态 */}
       {stage === 'loading' && (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', backgroundColor: '#1a1a1a', color: '#fff' }}>
-          <div style={{ width: '40px', height: '40px', border: '4px solid #d4af37', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite', marginBottom: '20px' }}></div>
-          <div style={{ fontSize: '18px', fontWeight: 'bold', letterSpacing: '2px' }}>正在调取 ADVENTURE TEAM 实时数据...</div>
-          <style dangerouslySetInnerHTML={{ __html: `
-            @keyframes spin { to { transform: rotate(360deg); } }
-          `}} />
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', fontSize: '20px', fontWeight: 'bold', color: '#d4af37' }}>
+          正在调取 Adventure Team 远程数据库...
         </div>
       )}
     </div>
