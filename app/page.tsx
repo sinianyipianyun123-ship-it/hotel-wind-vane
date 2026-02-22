@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export default function AdventureTeam() {
   const [hotelName, setHotelName] = useState("");
@@ -19,9 +18,11 @@ export default function AdventureTeam() {
 
   const generateReport = async () => {
     if (!hotelName) return alert("请输入调研目标酒店！");
+    
+    // 1. 获取 API Key
     const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY || "";
     if (!apiKey) {
-      setResult("错误：未检测到 API Key。请在 Vercel 环境变量中配置。");
+      setResult("错误：未检测到 API Key。请在 Verc + 环境变量中配置 NEXT_PUBLIC_GEMINI_API_KEY");
       return;
     }
 
@@ -29,61 +30,83 @@ export default function AdventureTeam() {
     setResult("");
 
     try {
-      const genAI = new GoogleGenerativeAI(apiKey);
+      // 2. 直接使用原生 Fetch 访问 Gemini 1.5 Pro 的 v1 接口
+      // 注意：URL 中明确指定了 v1 和 gemini-1.5-pro
+      const apiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key=${apiKey}`;
       
-      /**
-       * 【核心关键】强制锁定 v1 路径
-       * 通过 as any 绕过 SDK 的旧版语法检查，强行修改 API 版本
-       */
-      const model = (genAI as any).getGenerativeModel(
-        { model: "gemini-1.5-flash" },
-        { apiVersion: "v1" } 
-      );
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          contents: [{
+            parts: [{
+              text: `你现在是 Adventure Team 首席暗访员。
+              调研目标：${hotelName}。
+              口音偏好：${accent}。
+              任务：写一份极其犀利、毒舌且专业的酒店暗访报告。
+              要求：开头必须包含 [Adventure Team Confidential]，全程保持选定口音风格。`
+            }]
+          }]
+        })
+      });
 
-      const prompt = `[Adventure Team Confidential] 你现在是首席暗访员。目标：${hotelName}。口音：${accent}。任务：写一份极其毒舌、犀利的暗访报告。`;
+      const data = await response.json();
 
-      const chat = await model.generateContent(prompt);
-      const response = await chat.response;
-      setResult(response.text());
+      // 3. 处理报错信息
+      if (data.error) {
+        setResult(`Google 报错：${data.error.message} (${data.error.status})`);
+        return;
+      }
+
+      // 4. 解析结果
+      if (data.candidates && data.candidates[0].content) {
+        setResult(data.candidates[0].content.parts[0].text);
+      } else {
+        setResult("未能调取到有效档案，请稍后再试。");
+      }
     } catch (error: any) {
       console.error(error);
-      setResult(`调研中断：${error.message}`);
+      setResult(`网络连接异常：${error.message}`);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="p-8 max-w-2xl mx-auto bg-white min-h-screen text-black">
+    <div className="p-8 max-w-2xl mx-auto bg-white min-h-screen text-black font-sans">
       <header className="text-center mb-10">
         <h1 className="text-4xl font-black italic text-red-600 underline decoration-black underline-offset-8">
           ADVENTURE TEAM
         </h1>
-        <p className="mt-4 text-gray-500 uppercase tracking-widest text-xs font-bold underline">
+        <p className="mt-4 text-gray-500 uppercase tracking-widest text-[10px] font-black">
           Hotel Intelligence Division / 2026
         </p>
       </header>
 
       <div className="flex flex-col gap-6 bg-gray-50 p-8 rounded-3xl border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
         <div>
-          <label className="block text-[10px] font-black uppercase mb-2">Target Hotel / 目标</label>
+          <label className="block text-[10px] font-black uppercase mb-2 text-red-600">Target / 目标酒店</label>
           <input
             className="w-full border-4 border-black p-4 rounded-xl outline-none font-bold text-lg text-black focus:bg-yellow-50"
-            placeholder="输入酒店名称..."
+            placeholder="锁定吐槽对象..."
             value={hotelName}
             onChange={(e) => setHotelName(e.target.value)}
           />
         </div>
 
         <div>
-          <label className="block text-[10px] font-black uppercase mb-2">Voice Accent / 探员口音</label>
+          <label className="block text-[10px] font-black uppercase mb-2 text-red-600">Agent Voice / 探员口音</label>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
             {accentOptions.map((opt) => (
               <button
                 key={opt.label}
                 onClick={() => setAccent(opt.value)}
                 className={`p-2 border-2 rounded-lg font-bold text-xs transition-all ${
-                  accent === opt.value ? "bg-black text-white" : "bg-white border-gray-300 hover:border-black"
+                  accent === opt.value 
+                    ? "bg-black text-white border-black" 
+                    : "bg-white border-gray-300 hover:border-black"
                 }`}
               >
                 {opt.label}
@@ -95,16 +118,16 @@ export default function AdventureTeam() {
         <button
           onClick={generateReport}
           disabled={loading}
-          className="bg-red-600 text-white p-5 rounded-xl font-black text-xl hover:bg-black transition-colors disabled:bg-gray-400 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+          className="bg-red-600 text-white p-5 rounded-xl font-black text-xl hover:bg-black transition-colors disabled:bg-gray-400 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none"
         >
-          {loading ? "正在同步档案..." : "生成机密报告"}
+          {loading ? "正在解析机密数据..." : "生成毒舌报告"}
         </button>
       </div>
 
       {result && (
         <div className="mt-10 p-8 border-4 border-black rounded-3xl bg-white shadow-[12px_12px_0px_0px_rgba(255,0,0,0.1)]">
           <div className="flex justify-between items-center mb-4 border-b-2 border-black pb-2 text-[10px] font-black uppercase">
-            <span className="text-red-600 font-black">Status: Top Secret</span>
+            <span className="text-red-600 font-black">Classification: Top Secret</span>
             <span>Style: {accent.split('，')[0]}</span>
           </div>
           <div className="whitespace-pre-wrap leading-relaxed font-bold text-gray-800 italic">
