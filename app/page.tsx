@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -22,16 +23,15 @@ export default function AdventureTeam() {
     setLoading(true);
     setResult("");
     try {
-      // 1. 初始化
-      const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY || "";
-      const genAI = new GoogleGenerativeAI(apiKey);
+      // 初始化：直接读取环境变量
+      const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY || "");
 
-      // 2. 这里的括号必须严格闭合
+      // 【核心修复】这里只传模型名，不加 apiVersion，不加 latest。
+      // 配合你 package.json 里的 0.21.0 版本，这是唯一的正确写法。
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-      // 3. 注入提示词逻辑
       const prompt = `你是一个极其毒舌、犀利的酒店调研员，来自 Adventure Team。
-      调研目标：${hotelName}。要求：全程使用“${accent}”风格。`;
+      调研目标：${hotelName}。要求：全程使用“${accent}”风格，开头带上 [Adventure Team Confidential] 字样。`;
 
       const chat = await model.generateContent(prompt);
       const response = await chat.response;
@@ -51,7 +51,7 @@ export default function AdventureTeam() {
         <p className="text-gray-500 uppercase tracking-widest text-xs">Hotel Intelligence Division</p>
       </header>
       
-      <div className="flex flex-col gap-6 bg-gray-50 p-8 rounded-3xl border border-gray-200 shadow-sm">
+      <div className="flex flex-col gap-6 bg-gray-50 p-8 rounded-3xl border border-gray-200">
         <input
           className="w-full border-2 border-gray-300 p-4 rounded-2xl focus:border-black outline-none text-lg shadow-sm"
           placeholder="锁定调研目标酒店..."
@@ -76,7 +76,7 @@ export default function AdventureTeam() {
         <button
           onClick={generateReport}
           disabled={loading}
-          className="mt-4 bg-red-600 text-white p-5 rounded-2xl font-black text-xl hover:bg-red-700 disabled:bg-gray-400 shadow-lg active:scale-95"
+          className="mt-4 bg-red-600 text-white p-5 rounded-2xl font-black text-xl hover:bg-red-700 disabled:bg-gray-400 shadow-lg"
         >
           {loading ? "调研员正在潜入现场..." : "生成机密调研报告"}
         </button>
