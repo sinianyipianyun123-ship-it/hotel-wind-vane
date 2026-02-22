@@ -9,7 +9,6 @@ export default function AdventureTeam() {
   const [result, setResult] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // 口音逻辑：label 是显示的文字，value 是传给 AI 的指令
   const accentOptions = [
     { label: "标准普通话", value: "标准普通话" },
     { label: "京片子", value: "地道北京话，语气爷们儿且损" },
@@ -20,10 +19,9 @@ export default function AdventureTeam() {
 
   const generateReport = async () => {
     if (!hotelName) return alert("请输入酒店名称！");
-    
-    const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+    const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY || "";
     if (!apiKey) {
-      setResult("错误：未检测到 API Key。请在 Vercel 后台配置 NEXT_PUBLIC_GEMINI_API_KEY");
+      setResult("错误：未检测到 API Key。请在 Vercel 后台配置环境变量。");
       return;
     }
 
@@ -31,17 +29,15 @@ export default function AdventureTeam() {
     setResult("");
 
     try {
-      // 1. 初始化，严格使用 v1 版本，绕开 v1beta 的 404 陷阱
       const genAI = new GoogleGenerativeAI(apiKey);
+      // 【核心修复】显式指定 v1，强制杀死 v1beta 路径
       const model = genAI.getGenerativeModel({ 
         model: "gemini-1.5-flash",
         apiVersion: "v1" 
       });
 
-      // 2. 注入 Adventure Team 专属逻辑和口音偏好
       const prompt = `你现在是 Adventure Team 的首席暗访员。
-      调研目标：${hotelName}。
-      口音偏好：使用“${accent}”风格。
+      调研目标：${hotelName}。要求使用“${accent}”风格。
       任务：写一份极其犀利、毒舌且专业的酒店调研报告。
       开头必须包含 [Adventure Team Confidential] 标识。`;
 
@@ -49,8 +45,7 @@ export default function AdventureTeam() {
       const response = await chat.response;
       setResult(response.text());
     } catch (error: any) {
-      console.error("API Error Detail:", error);
-      // 如果依然报错，我们会在这里看到最真实的错误信息
+      console.error(error);
       setResult(`调研中断：${error.message}`);
     } finally {
       setLoading(false);
