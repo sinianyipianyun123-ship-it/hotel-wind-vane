@@ -4,7 +4,7 @@ import { useState } from "react";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // 确认这里的 Key 绝对没有空格
-const GOOGLE_AI_KEY = "AIzaSyBfbvl6kvWWRAvY__2698hbXDaJp1QXq10";
+const GOOGLE_AI_KEY = "AIzaSyDZVTSIMqb7yone-DSGbWqXkUJrMXIQ9aQ";
 
 export default function HotelSearch() {
   const [query, setQuery] = useState("");
