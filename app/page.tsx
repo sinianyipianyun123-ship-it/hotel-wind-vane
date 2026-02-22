@@ -6,17 +6,17 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export default function AdventureTeam() {
   const [hotelName, setHotelName] = useState("");
-  const [accent, setAccent] = useState("标准普通话"); // 默认口音
+  const [accent, setAccent] = useState("标准普通话"); 
   const [result, setResult] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // 1. 口音选项定义：这里决定了 AI 说话的“味儿”
+  // 1. 口音偏好选项
   const accentOptions = [
     { label: "标准普通话", value: "标准普通话" },
-    { label: "京片子", value: "地道北京话，多用‘您呐’、‘合着’，语气爷们儿且损" },
-    { label: "东北话", value: "东北方言，多用‘必须滴’、‘整挺好’，语调高昂犀利" },
-    { label: "粤语/港式中文", value: "中英文夹杂的港式腔调，多用‘Literal’、‘系咁先’" },
-    { label: "伦敦腔", value: "British London Accent, 带着英式冷幽默和绅士般的尖酸刻薄" }
+    { label: "京片子", value: "地道北京话，语气要带点儿‘爷们儿’气，多用‘您呐’、‘合着’" },
+    { label: "东北话", value: "东北方言，语调嘎嘎犀利，多用‘必须滴’、‘整挺好’" },
+    { label: "粤语/港式中文", value: "中英文夹杂的港式腔调，多用‘Literal’、『系咁先』" },
+    { label: "伦敦腔", value: "British London Accent, 带着冷幽默和绅士般的尖酸刻薄" }
   ];
 
   const generateReport = async () => {
@@ -25,29 +25,30 @@ export default function AdventureTeam() {
     setResult("");
 
     try {
-      // 读取你在 Vercel 后台配好的 API Key
+      // 这里的 Key 会读取你在 Vercel 后台配好的 NEXT_PUBLIC_GEMINI_API_KEY
       const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY || "");
 
-      // 2. 【核心修复】：配合 npm install @google/generative-ai@latest 后的最简写法
-      // 不再手动写 apiVersion，让最新插件自动处理路径，彻底告别 404
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      // 2. 【核心修复】：采用最简写法，不手动指定 apiVersion，由 SDK 自动对齐
+      const model = genAI.getGenerativeModel({ 
+        model: "gemini-1.5-flash" 
+      });
 
-      // 3. 缝合逻辑：将 accent 变量注入提示词
-      const prompt = `你是一个极其毒舌、犀利的酒店调研员，来自秘密组织 Adventure Team。
+      // 3. 缝合口音逻辑的提示词
+      const prompt = `你是一个极其毒舌、犀利且真实的酒店调研员，来自秘密组织 Adventure Team。
       现在的调研目标是：${hotelName}。
       
       ⚠️ 任务指令：
-      1. 你必须全程使用“${accent}”的口音和用词风格来撰写。
-      2. 评价要真实且刻薄，挖掘不为人知的槽点，拒绝公关辞令。
+      1. 你必须全程使用“${accent}”的口音和风格撰写。
+      2. 评价要真实且刻薄，挖掘不为人知的槽点，拒绝废话。
       3. 报告开头必须带有 [Adventure Team Confidential] 字样。
-      4. 包含：整体初印象、客房细节毒舌点评、最终避雷建议。`;
+      4. 报告包含：整体初印象、客房细节毒舌点评、最终避雷建议。`;
 
       const chat = await model.generateContent(prompt);
       const response = await chat.response;
       setResult(response.text());
     } catch (error: any) {
       console.error(error);
-      setResult(`调研失败：${error.message || "请检查 API Key 或插件版本"}`);
+      setResult(`调研失败：${error.message || "请检查 API Key 权限或 Vercel 变量配置"}`);
     } finally {
       setLoading(false);
     }
@@ -80,4 +81,5 @@ export default function AdventureTeam() {
                 onClick={() => setAccent(opt.value)}
                 className={`p-3 border-2 rounded-xl text-sm font-bold transition-all ${
                   accent === opt.value 
-                  ? "bg-black text-white border-black scale-105
+                  ? "bg-black text-white border-black scale-105 shadow-md" 
+                  : "bg-white text-gray-500 border-gray-200
