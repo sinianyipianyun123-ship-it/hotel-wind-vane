@@ -28,10 +28,9 @@ export default function AdventureTeam() {
       const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY || "");
 
       // 2. 核心修复：使用 v1beta 路径，这是目前海外 Key 最稳的调用方式
-      const model = genAI.getGenerativeModel(
-        { model: "gemini-1.5-flash" },
-        { apiVersion: "v1beta" }
-      );
+      const model = genAI.getGenerativeModel({
+  model: "gemini-1.5-flash-latest",
+});
 
       // 3. 缝合逻辑：将用户选择的 accent 注入提示词
       const prompt = `你是一个极其毒舌、犀利的酒店调研员，来自秘密组织 Adventure Team。
