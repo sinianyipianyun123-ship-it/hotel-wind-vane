@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
@@ -24,81 +23,61 @@ export default function AdventureTeam() {
       setResult("错误：未检测到 API Key。请在 Vercel 后台配置环境变量。");
       return;
     }
-
     setLoading(true);
     setResult("");
-
     try {
       const genAI = new GoogleGenerativeAI(apiKey);
-      // 【核心修复】显式指定 v1，强制杀死 v1beta 路径
+      // 显式指定 v1，强制绕开 v1beta 路径
       const model = genAI.getGenerativeModel({ 
         model: "gemini-1.5-flash",
         apiVersion: "v1" 
       });
-
-      const prompt = `你现在是 Adventure Team 的首席暗访员。
-      调研目标：${hotelName}。要求使用“${accent}”风格。
-      任务：写一份极其犀利、毒舌且专业的酒店调研报告。
-      开头必须包含 [Adventure Team Confidential] 标识。`;
-
+      const prompt = `你是一个极其毒舌的酒店调研员。目标：${hotelName}。要求使用“${accent}”风格。`;
       const chat = await model.generateContent(prompt);
       const response = await chat.response;
       setResult(response.text());
     } catch (error: any) {
-      console.error(error);
-      setResult(`调研中断：${error.message}`);
+      setResult(`调研失败：${error.message}`);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="p-8 max-w-2xl mx-auto font-sans text-black min-h-screen bg-white">
+    <div className="p-8 max-w-2xl mx-auto bg-white min-h-screen text-black">
       <header className="text-center mb-10">
-        <h1 className="text-4xl font-black italic mb-2 text-red-600 underline">ADVENTURE TEAM</h1>
-        <p className="text-gray-500 uppercase tracking-widest text-xs font-bold">Hotel Intelligence Division</p>
+        <h1 className="text-4xl font-black italic text-red-600 underline">ADVENTURE TEAM</h1>
+        <p className="text-gray-500 uppercase tracking-widest text-xs font-bold">Intelligence Division</p>
       </header>
-      
       <div className="flex flex-col gap-6 bg-gray-50 p-8 rounded-3xl border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
         <input
-          className="w-full border-4 border-black p-4 rounded-xl focus:bg-yellow-50 outline-none text-lg font-bold"
-          placeholder="输入调研目标酒店..."
+          className="w-full border-4 border-black p-4 rounded-xl outline-none font-bold text-lg"
+          placeholder="锁定调研目标..."
           value={hotelName}
           onChange={(e) => setHotelName(e.target.value)}
         />
-        
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
           {accentOptions.map((opt) => (
             <button
               key={opt.label}
               onClick={() => setAccent(opt.value)}
-              className={`p-3 border-2 rounded-xl text-sm font-black transition-all ${
-                accent === opt.value ? "bg-black text-white border-black" : "bg-white text-black border-gray-300 hover:border-black"
-              }`}
+              className={`p-2 border-2 rounded-lg font-bold transition-all ${accent === opt.value ? "bg-black text-white" : "bg-white border-gray-300"}`}
             >
               {opt.label}
             </button>
           ))}
         </div>
-
         <button
           onClick={generateReport}
           disabled={loading}
-          className="mt-4 bg-red-600 text-white p-5 rounded-xl font-black text-xl hover:bg-black transition-colors disabled:bg-gray-400 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+          className="bg-red-600 text-white p-4 rounded-xl font-black text-xl hover:bg-black disabled:bg-gray-400"
         >
-          {loading ? "正在调取机密档案..." : "生成报告"}
+          {loading ? "正在调取档案..." : "生成报告"}
         </button>
       </div>
-
       {result && (
-        <div className="mt-10 p-8 border-4 border-black rounded-3xl bg-white shadow-[12px_12px_0px_0px_rgba(255,0,0,0.1)]">
-          <div className="flex justify-between items-center mb-4 border-b-4 border-black pb-2 text-xs font-black">
-            <span className="text-red-600">SECURITY LEVEL: TOP SECRET</span>
-            <span className="text-black">AGENT STYLE: {accent.split('，')[0]}</span>
-          </div>
-          <div className="whitespace-pre-wrap leading-relaxed font-bold text-gray-800">
-            {result}
-          </div>
+        <div className="mt-10 p-8 border-4 border-black rounded-3xl bg-white shadow-[12px_12px_0px_0px_rgba(0,0,0,0.1)]">
+          <div className="whitespace-pre-wrap leading-relaxed font-bold text-gray-800">{result}</div>
         </div>
       )}
     </div>
